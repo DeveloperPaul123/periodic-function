@@ -5,22 +5,21 @@
 #include <type_traits>
 
 namespace dp {
-  template <typename Callback> 
-  class periodic_function {
+  template <typename Callback> class periodic_function {
   public:
     using time_type = unsigned long long;
 
     periodic_function(Callback &&callback) : callback_(callback) {}
 
-    ~periodic_function() { if(is_running_) stop(); }
+    ~periodic_function() {
+      if (is_running_) stop();
+    }
 
     void call_every(const std::chrono::milliseconds &interval) {
       call_every_internal(interval.count());
     }
 
-    void call_every(const time_type &milliseconds) {
-      call_every_internal(milliseconds);
-    }
+    void call_every(const time_type &milliseconds) { call_every_internal(milliseconds); }
 
     void stop() {
       std::lock_guard<std::mutex> guard(stop_flag_mutex_);

@@ -15,7 +15,6 @@ TEST_CASE("Timing of function is within reason") {
     std::atomic<int> count{0};
     bool first_call = true;
     void on_timeout() {
-
       if (first_call) {
         first_call = false;
         last_call = std::chrono::high_resolution_clock::now();
@@ -45,10 +44,11 @@ TEST_CASE("Timing of function is within reason") {
   func.stop();
 
   // subtract 1 because we can't calculate an interval on the first cycle.
-  CHECK_EQ(callback.count, total_cycles-1);
+  CHECK_EQ(callback.count, total_cycles - 1);
 
   // calculate the average time between cycles
   const auto average_interval = callback.interval_sum / (double)callback.count;
 
-  CHECK_LE(std::abs(average_interval - (double)target_interval), 2);
+  // Might be better to check each interval instead of the average
+  CHECK_LE(std::abs(average_interval - (double)target_interval), 1);
 }
