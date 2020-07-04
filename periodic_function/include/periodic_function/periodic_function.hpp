@@ -5,7 +5,13 @@
 #include <type_traits>
 
 namespace dp {
-  template <typename Callback> class periodic_function {
+  /**
+   * @brief Repeatedly calls a function at a given time interval.
+   * @details
+   * @tparam Callback the callback time (std::function or a lambda)
+   */
+  template <typename Callback>
+  class periodic_function {
   public:
     using time_type = unsigned long long;
 
@@ -15,18 +21,33 @@ namespace dp {
       if (is_running_) stop();
     }
 
+    /**
+     * @brief
+     * @param interval the interval in milliseconds.
+     */
     void call_every(const std::chrono::milliseconds &interval) {
       call_every_internal(interval.count());
     }
 
+    /**
+     * @brief
+     * @param milliseconds the interval in milliseconds
+     */
     void call_every(const time_type &milliseconds) { call_every_internal(milliseconds); }
 
+    /**
+     * @brief Stop running the function if it's running.
+     */
     void stop() {
       std::lock_guard<std::mutex> guard(stop_flag_mutex_);
       stop_ = true;
       is_running_ = false;
     }
 
+    /**
+     * @brief Returns a boolean to indicate if the function is running.
+     * @return true if the function is running, false otherwise.
+     */
     [[nodiscard]] bool is_running() const { return is_running_; }
 
   private:

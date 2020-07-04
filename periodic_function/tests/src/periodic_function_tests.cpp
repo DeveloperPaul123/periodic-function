@@ -6,7 +6,7 @@
 #include <iostream>
 #include <periodic_function/periodic_function.hpp>
 
-TEST_CASE("Timing of function is within reason") {
+TEST_CASE("Acceptable function timing") {
   const auto target_interval = 300U;
 
   struct test_callback {
