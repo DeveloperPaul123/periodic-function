@@ -7,84 +7,58 @@
 namespace dp {
   /**
    * @brief Repeatedly calls a function at a given time interval.
-   * @details
    * @tparam Callback the callback time (std::function or a lambda)
    */
-  template <typename Callback>
-  class periodic_function {
+  template <typename Callback> class periodic_function {
   public:
     using time_type = unsigned long long;
 
-    periodic_function(Callback &&callback) : callback_(callback) {}
+    periodic_function(Callback &&callback, const time_type &interval)
+        : callback_(callback), interval_(interval) {}
 
     ~periodic_function() {
       if (is_running_) stop();
     }
 
     /**
-     * @brief
-     * @param interval the interval in milliseconds.
+     * @brief Start calling the callback function.
+     * @details If the callback is running already, calling start again will stop any existing
+     * callback execution and will restart it. This may result in the callback being called with a
+     * shorter time interval than expected.
      */
-    void call_every(const std::chrono::milliseconds &interval) {
-      call_every_internal(interval.count());
-    }
+    void start() { start_internal(interval_); }
 
     /**
-     * @brief
-     * @param milliseconds the interval in milliseconds
-     */
-    void call_every(const time_type &milliseconds) { call_every_internal(milliseconds); }
-
-    /**
-     * @brief Stop running the function if it's running.
+     * @brief Stop calling the callback function if the timer is running.
      */
     void stop() {
-      std::lock_guard<std::mutex> guard(stop_flag_mutex_);
       stop_ = true;
       is_running_ = false;
     }
 
     /**
-     * @brief Returns a boolean to indicate if the function is running.
-     * @return true if the function is running, false otherwise.
+     * @brief Returns a boolean to indicate if the timer is running.
+     * @return true if the timer is running, false otherwise.
      */
     [[nodiscard]] bool is_running() const { return is_running_; }
 
   private:
-    void call_every_internal(const time_type &interval) {
-      interval_ = interval;
-      this->stop_ = false;
-      periodic_function_thread_ = std::thread([this]() {
+    void start_internal(const time_type &interval) {
+      if (is_running()) stop();
+      std::thread([this]() {
         while (true) {
-          if (safe_read_stop_flag()) break;
+          if (stop_) break;
           callback_();
-          if (safe_read_stop_flag()) break;
-          std::this_thread::sleep_for(std::chrono::milliseconds(safe_interval_read()));
-          if (safe_read_stop_flag()) break;
+          std::this_thread::sleep_for(std::chrono::milliseconds(interval_));
         }
-      });
-      periodic_function_thread_.detach();
+      }).detach();
       is_running_ = true;
     }
 
-    bool safe_read_stop_flag() {
-      std::lock_guard<std::mutex> guard(stop_flag_mutex_);
-      return this->stop_;
-    }
-
-    time_type safe_interval_read() {
-      std::lock_guard<std::mutex> guard(interval_mutex_);
-      return interval_;
-    }
-
-    bool stop_{false};
-    bool is_running_{false};
-
-    std::mutex stop_flag_mutex_;
-    std::mutex interval_mutex_;
+    std::atomic_bool stop_{false};
+    std::atomic_bool is_running_{false};
 
     time_type interval_{100};
-    std::thread periodic_function_thread_;
 
     Callback callback_;
   };

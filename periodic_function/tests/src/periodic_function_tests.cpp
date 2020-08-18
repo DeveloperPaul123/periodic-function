@@ -6,6 +6,14 @@
 #include <iostream>
 #include <periodic_function/periodic_function.hpp>
 
+struct callback_counter {
+  std::atomic<int> count{0};
+  void on_timeout() {
+    ++count;
+    std::cout << "on_timeout\n";
+  }
+};
+
 TEST_CASE("Acceptable function timing") {
   const auto target_interval = 300U;
 
@@ -21,22 +29,22 @@ TEST_CASE("Acceptable function timing") {
         return;
       }
 
-      count++;
+      ++count;
 
       // check elapsed time against the interval time
       const auto now = std::chrono::high_resolution_clock::now();
       const auto elapsed_time
           = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_call);
-      interval_sum += (double)elapsed_time.count();
+      interval_sum += static_cast<double>(elapsed_time.count());
 
-      std::cout << "Elapsed time: " << elapsed_time.count() << std::endl;
+      std::cout << "Elapsed time: " << elapsed_time.count() << '\n';
       last_call = now;
     }
   };
 
   test_callback callback{};
-  dp::periodic_function func(std::bind(&test_callback::on_timeout, &callback));
-  func.call_every(std::chrono::milliseconds(target_interval));
+  dp::periodic_function func(std::bind(&test_callback::on_timeout, &callback), target_interval);
+  func.start();
 
   const auto total_cycles = 25;
   std::this_thread::sleep_for(std::chrono::milliseconds(target_interval * total_cycles));
@@ -47,8 +55,40 @@ TEST_CASE("Acceptable function timing") {
   CHECK_EQ(callback.count, total_cycles - 1);
 
   // calculate the average time between cycles
-  const auto average_interval = callback.interval_sum / (double)callback.count;
+  const auto average_interval = callback.interval_sum / static_cast<double>(callback.count);
 
   // Might be better to check each interval instead of the average
   CHECK_LE(std::abs(average_interval - (double)target_interval), 1);
+}
+
+TEST_CASE("Callable destruction") {
+  const auto interval = 300U;
+
+  callback_counter call_back;
+
+  // periodic function scope, ensure that callback calls stop on function destruction
+  {
+    dp::periodic_function func(std::bind(&callback_counter::on_timeout, &call_back), interval);
+    func.start();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+  }
+
+  std::cout << "Callback count: " << call_back.count << '\n';
+  CHECK_EQ(call_back.count, 4);
+}
+
+TEST_CASE("Repeatedly start callable") {
+  const auto interval = 100U;
+
+  callback_counter counter;
+
+  dp::periodic_function func(std::bind(&callback_counter::on_timeout, &counter), interval);
+
+  func.start();
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+  func.start();
+  func.start();
+  func.start();
+
+  std::cout << "Callback count: " << counter.count << '\n';
 }
