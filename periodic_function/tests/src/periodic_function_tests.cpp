@@ -2,9 +2,9 @@
 
 #include <atomic>
 #include <chrono>
+#include <cmath>
 #include <functional>
 #include <iostream>
-#include <cmath>
 #include <periodic_function/periodic_function.hpp>
 
 struct callback_counter {
