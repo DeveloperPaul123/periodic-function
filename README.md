@@ -11,6 +11,12 @@ Simple library to repeatedly call a member function, free function or lambda at 
 
 ## Features
 
+* Use various callback types:
+  * Class member functions via `std::bind`
+  * Free functions
+  * Lambdas
+* RAII cleanup, don't have to worry about explicitly calling `stop()`.
+
 ## Usage
 
 ```cpp
@@ -24,7 +30,8 @@ dp::periodic_function heartbeat([]() {
 // start calling function
 heartbeat.start();
 
-// stop calling the function, function will stop being called upon desctruction if stop() isn't called.
+// optional: stop calling the function
+// function will stop being called when object goes out of scope
 heartbeat.stop();
 ```
 
@@ -42,5 +49,3 @@ To run tests, simple `cd` into the build directory and run:
 ```bash
 ctest --build-config Debug
 ```
-
-To collect code coverage information, run CMake with the `-DENABLE_TEST_COVERAGE=1` option.
