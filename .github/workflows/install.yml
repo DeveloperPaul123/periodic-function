@@ -19,7 +19,7 @@ jobs:
         rm -rf build
 
     - name: Configure
-      run: cmake -S periodic_function/tests -B build -DTEST_INSTALLED_VERSION=1
+      run: cmake -S . -B build -DTEST_INSTALLED_VERSION=1
 
     - name: Build
       run: cmake --build build --config Debug -j4
