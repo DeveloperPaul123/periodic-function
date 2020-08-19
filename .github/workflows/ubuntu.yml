@@ -8,14 +8,13 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v1
     
     - name: configure
-      run: cmake -Htest -Bbuild -DENABLE_TEST_COVERAGE=1
+      run: cmake -S . -B build -DENABLE_TEST_COVERAGE=1
 
     - name: build
       run: cmake --build build --config Debug -j4
@@ -25,5 +24,5 @@ jobs:
         cd build
         ctest --build-config Debug
 
-    - name: collect code coverage
+    - name: Collect code coverage
       run: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"

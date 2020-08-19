@@ -13,13 +13,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     
-    - name: configure
-      run: cmake -Htest -Bbuild
+    - name: Configure
+      run: cmake -S . -B build
 
-    - name: build
+    - name: Build
       run: cmake --build build --config Debug -j4
 
-    - name: test
+    - name: Run tests
       run: |
         cd build
         ctest --build-config Debug
