@@ -14,7 +14,7 @@ namespace dp {
     using time_type = unsigned long long;
 
     periodic_function(Callback &&callback, const time_type &interval)
-        : callback_(callback), interval_(interval) {}
+        : interval_(interval), callback_(callback) {}
 
     ~periodic_function() {
       if (is_running_) stop();
@@ -49,7 +49,7 @@ namespace dp {
         while (true) {
           if (stop_) break;
           callback_();
-          std::this_thread::sleep_for(std::chrono::milliseconds(interval_));
+          std::this_thread::sleep_for(std::chrono::milliseconds(interval));
         }
       }).detach();
       is_running_ = true;
