@@ -1,5 +1,8 @@
 include(cmake/CPM.cmake)
 
+# System threading library
+find_package(Threads REQUIRED)
+
 # Make the package installable
 CPMAddPackage(
   NAME PackageProject.cmake

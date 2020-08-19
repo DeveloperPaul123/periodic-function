@@ -45,7 +45,7 @@ namespace dp {
   private:
     void start_internal(const time_type &interval) {
       if (is_running()) stop();
-      std::thread([this]() {
+      std::thread([this, interval]() {
         while (true) {
           if (stop_) break;
           callback_();

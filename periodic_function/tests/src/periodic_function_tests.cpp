@@ -19,7 +19,7 @@ TEST_CASE("Acceptable function timing") {
   const auto target_interval = 300U;
 
   struct test_callback {
-    std::chrono::steady_clock::time_point last_call{};
+    std::chrono::high_resolution_clock::time_point last_call{};
     double interval_sum{0.0};
     std::atomic<int> count{0};
     bool first_call = true;
