@@ -9,4 +9,9 @@ endif()
 include(cmake/PeriodicFunctionOptions.cmake)
 include(cmake/PeriodicFunctionDependencies.cmake)
 
+if(BUILD_TESTS) 
+    # have to do this at the top level directory before adding sub-directories
+    enable_testing()
+endif()
+
 add_subdirectory(periodic_function)

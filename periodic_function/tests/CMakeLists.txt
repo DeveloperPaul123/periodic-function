@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 project(periodic-function-tests
   LANGUAGES CXX
@@ -22,10 +22,6 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU"
 else()
   set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 endif()
-
-# ---- Add GreeterTests ----
-
-enable_testing() 
 
 # use doctest_discover_tests for better CTest support
 include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
