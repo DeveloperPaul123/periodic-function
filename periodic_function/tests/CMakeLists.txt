@@ -26,8 +26,3 @@ endif()
 # use doctest_discover_tests for better CTest support
 include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 doctest_discover_tests(${PROJECT_NAME})
-
-if (ENABLE_TEST_COVERAGE)
-  set_target_properties(periodic-function PROPERTIES CXX_STANDARD 17 COMPILE_FLAGS "-O0 -g -fprofile-arcs -ftest-coverage --coverage")
-  target_link_options(periodic-function PUBLIC "--coverage")
-endif()
