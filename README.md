@@ -1,11 +1,16 @@
+<h1 align="center">
+periodic-function
+</h1>
+
+[![say thanks](https://img.shields.io/badge/Say%20Thanks-👍-1EAEDB.svg)](https://github.com/DeveloperPaul123/periodic-function/stargazers)
+[![Discord](https://img.shields.io/discord/652515194572111872)](https://img.shields.io/discord/652515194572111872)
+
 [![Actions Status](https://github.com/DeveloperPaul123/periodic-function/workflows/MacOS/badge.svg)](https://github.com/DeveloperPaul123/periodic-function/actions)
 [![Actions Status](https://github.com/DeveloperPaul123/periodic-function/workflows/Windows/badge.svg)](https://github.com/DeveloperPaul123/periodic-function/actions)
 [![Actions Status](https://github.com/DeveloperPaul123/periodic-function/workflows/Ubuntu/badge.svg)](https://github.com/DeveloperPaul123/periodic-function/actions)
 [![Actions Status](https://github.com/DeveloperPaul123/periodic-function/workflows/Ubuntu-20.04/badge.svg)](https://github.com/DeveloperPaul123/periodic-function/actions)
 [![Actions Status](https://github.com/DeveloperPaul123/periodic-function/workflows/Style/badge.svg)](https://github.com/DeveloperPaul123/periodic-function/actions)
 [![Actions Status](https://github.com/DeveloperPaul123/periodic-function/workflows/Install/badge.svg)](https://github.com/DeveloperPaul123/periodic-function/actions)
-
-# periodic-function
 
 Simple library to repeatedly call a member function, free function or lambda at a given time interval.
 
