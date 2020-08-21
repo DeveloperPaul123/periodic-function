@@ -36,7 +36,8 @@ namespace dp {
       is_running_ = false;
       // ensure that the detached thread exits.
       // stop_ is set to false when the thread exits it's main loop
-      while(stop_) {}
+      while (stop_) {
+      }
     }
 
     /**
