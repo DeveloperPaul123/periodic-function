@@ -35,7 +35,7 @@ heartbeat.start();
 heartbeat.stop();
 ```
 
-### Building
+## Building
 
 Use the following commands to build the project
 
@@ -49,3 +49,20 @@ To run tests, simple `cd` into the build directory and run:
 ```bash
 ctest --build-config Debug
 ```
+
+## Contributing
+
+Contributions are very welcome. Please see [contribution guidelines for more info](CONTRIBUTING.md).
+
+## License
+
+The project is licensed under the Apache License Version 2.0. See [LICENSE](LICENSE) for more details.
+
+## Author
+
+| [<img src="https://avatars0.githubusercontent.com/u/6591180?s=460&v=4" width="100"><br><sub>@DeveloperPaul123</sub>](https://github.com/DeveloperPaul123) |
+|:----:|
+
+### WIP Items
+
+Performance on MacOS is currently not up to my standards. This is actively being investigated.
