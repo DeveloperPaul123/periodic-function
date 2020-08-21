@@ -34,6 +34,9 @@ namespace dp {
     void stop() {
       stop_ = true;
       is_running_ = false;
+      // ensure that the detached thread exits.
+      // stop_ is set to false when the thread exits it's main loop
+      while(stop_) {}
     }
 
     /**
@@ -51,6 +54,7 @@ namespace dp {
           callback_();
           std::this_thread::sleep_for(std::chrono::milliseconds(interval));
         }
+        stop_ = false;
       }).detach();
       is_running_ = true;
     }

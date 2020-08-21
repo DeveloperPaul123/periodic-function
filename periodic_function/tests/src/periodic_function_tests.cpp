@@ -85,11 +85,13 @@ TEST_CASE("Repeatedly start callable") {
 
   dp::periodic_function func(std::bind(&callback_counter::on_timeout, &counter), interval);
 
-  func.start();
-  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-  func.start();
-  func.start();
-  func.start();
-
+  const auto call_count = 5;
+  for (auto i = 0; i < call_count; ++i) {
+    func.start();
+  }
+  std::this_thread::sleep_for(std::chrono::milliseconds(call_count * interval));
+  func.stop();
   std::cout << "Callback count: " << counter.count << '\n';
+
+  CHECK_EQ(counter.count, call_count);
 }
