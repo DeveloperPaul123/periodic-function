@@ -1,7 +1,7 @@
 # Originally from here: https://github.com/lefticus/cpp_starter_project
 
 function(set_project_warnings project_name)
-  option(EVENTBUS_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
+  option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
 
   set(MSVC_WARNINGS
       /W4 # Baseline reasonable warnings

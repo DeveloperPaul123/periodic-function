@@ -8,10 +8,14 @@ endif()
 
 include(cmake/PeriodicFunctionOptions.cmake)
 include(cmake/PeriodicFunctionDependencies.cmake)
+include(cmake/CompilerWarnings.cmake)
 
 if(BUILD_TESTS) 
     # have to do this at the top level directory before adding sub-directories
     enable_testing()
 endif()
+
+add_library(project-warnings INTERFACE)
+set_project_warnings(project-warnings)
 
 add_subdirectory(periodic_function)

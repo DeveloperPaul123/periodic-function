@@ -15,7 +15,7 @@ set(testing_sources
 )
 
 add_executable(${PROJECT_NAME} ${testing_sources})
-target_link_libraries(${PROJECT_NAME} doctest periodic-function)
+target_link_libraries(${PROJECT_NAME} doctest periodic-function project-warnings)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 COMPILE_FLAGS "-Wall -pedantic -Wextra -Werror")
