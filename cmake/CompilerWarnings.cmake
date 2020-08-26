@@ -63,7 +63,7 @@ function(set_project_warnings project_name)
       -Wno-c++98-compat
   )
 
-  if (EVENTBUS_WARNINGS_AS_ERRORS)
+  if (WARNINGS_AS_ERRORS)
     set(CLANG_WARNINGS ${CLANG_WARNINGS} -Werror)
     set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
   endif()
@@ -82,7 +82,8 @@ function(set_project_warnings project_name)
   # clang can be used with visual studio directly and uses the cl like interface.
   if(MSVC AND NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
     set(PROJECT_WARNINGS ${MSVC_WARNINGS})
-  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    # not on windows and using Clang or AppleClang
     set(PROJECT_WARNINGS ${CLANG_WARNINGS})
   else()
     set(PROJECT_WARNINGS ${GCC_WARNINGS})

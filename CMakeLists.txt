@@ -45,7 +45,6 @@ if(NOT TEST_INSTALLED_VERSION)
   
   # being a cross-platform target, we enforce standards conformance on MSVC
   target_compile_options(${PROJECT_NAME} INTERFACE "$<$<BOOL:${MSVC}>:/permissive->")
-  target_compile_options(${PROJECT_NAME} INTERFACE "$<$<BOOL:${GCC}>:--enable-libstdccxx-time>")
 
   target_include_directories(${PROJECT_NAME}
     INTERFACE
