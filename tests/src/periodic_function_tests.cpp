@@ -48,7 +48,8 @@ TEST_CASE("Acceptable function timing") {
   func.start();
 
   const auto total_cycles = 25;
-  const auto wake_time = std::chrono::high_resolution_clock::now() + (target_interval * total_cycles);
+  const auto wake_time
+      = std::chrono::high_resolution_clock::now() + (target_interval * total_cycles);
   std::this_thread::sleep_until(wake_time);
 
   func.stop();
@@ -72,7 +73,8 @@ TEST_CASE("Callable destruction") {
   {
     dp::periodic_function func(std::bind(&callback_counter::on_timeout, &call_back), interval);
     func.start();
-    const auto wake_time = std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(1000);
+    const auto wake_time
+        = std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(1000);
     std::this_thread::sleep_until(wake_time);
   }
 
