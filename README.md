@@ -61,7 +61,7 @@ Contributions are very welcome. Please see [contribution guidelines for more inf
 
 ## License
 
-The project is licensed under the Apache License Version 2.0. See [LICENSE](LICENSE) for more details.
+The project is licensed under the MIT license. See [LICENSE](LICENSE) for more details.
 
 ## Author
 
