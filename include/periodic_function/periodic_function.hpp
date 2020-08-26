@@ -65,7 +65,7 @@ namespace dp {
       is_running_ = true;
     }
 
-    std::thread runner_;
+    std::thread runner_{};
     std::atomic_bool stop_{false};
     std::atomic_bool is_running_{false};
 
