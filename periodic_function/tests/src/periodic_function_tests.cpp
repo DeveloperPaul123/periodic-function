@@ -16,7 +16,7 @@ struct callback_counter {
 };
 
 TEST_CASE("Acceptable function timing") {
-  const auto target_interval = 300U;
+  std::chrono::milliseconds target_interval{300};
 
   struct test_callback {
     std::chrono::high_resolution_clock::time_point last_call{};
@@ -59,11 +59,11 @@ TEST_CASE("Acceptable function timing") {
   const auto average_interval = callback.interval_sum / static_cast<double>(callback.count);
 
   // Might be better to check each interval instead of the average
-  CHECK_LE(std::abs(average_interval - (double)target_interval), 1);
+  CHECK_LE(std::abs(average_interval - (double)target_interval.count()), 1);
 }
 
 TEST_CASE("Callable destruction") {
-  const auto interval = 300U;
+  const std::chrono::milliseconds interval{300};
 
   callback_counter call_back;
 
@@ -79,7 +79,7 @@ TEST_CASE("Callable destruction") {
 }
 
 TEST_CASE("Repeatedly start callable") {
-  const auto interval = 100U;
+  const std::chrono::milliseconds interval{100};
 
   callback_counter counter;
 
