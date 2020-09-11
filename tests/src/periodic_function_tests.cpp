@@ -16,8 +16,6 @@ struct callback_counter {
 };
 
 TEST_CASE("Acceptable function timing") {
-  std::chrono::milliseconds target_interval{300};
-
   struct test_callback {
     std::chrono::high_resolution_clock::time_point last_call{};
     double interval_sum{0.0};
@@ -43,25 +41,33 @@ TEST_CASE("Acceptable function timing") {
     }
   };
 
-  test_callback callback{};
-  dp::periodic_function func(std::bind(&test_callback::on_timeout, &callback), target_interval);
-  func.start();
+  std::vector<std::chrono::milliseconds> intervals
+      = {std::chrono::milliseconds{100},  std::chrono::milliseconds{300},
+         std::chrono::milliseconds{500},  std::chrono::milliseconds{1000},
+         std::chrono::milliseconds{5000}, std::chrono::milliseconds{10000}};
 
-  const auto total_cycles = 25;
-  const auto wake_time
-      = std::chrono::high_resolution_clock::now() + (target_interval * total_cycles);
-  std::this_thread::sleep_until(wake_time);
+  for (const auto &interval : intervals) {
+    test_callback callback{};
 
-  func.stop();
+    dp::periodic_function func(std::bind(&test_callback::on_timeout, &callback), interval);
+    func.start();
 
-  // subtract 1 because we can't calculate an interval on the first cycle.
-  CHECK_EQ(callback.count, total_cycles - 1);
+    const auto total_cycles = 25;
+    const auto wake_time
+        = std::chrono::high_resolution_clock::now() + (interval * total_cycles);
+    std::this_thread::sleep_until(wake_time);
 
-  // calculate the average time between cycles
-  const auto average_interval = callback.interval_sum / static_cast<double>(callback.count);
+    func.stop();
 
-  // Might be better to check each interval instead of the average
-  CHECK_LE(std::abs(average_interval - static_cast<double>(target_interval.count())), 1);
+    // subtract 1 because we can't calculate an interval on the first cycle.
+    CHECK_EQ(callback.count, total_cycles - 1);
+
+    // calculate the average time between cycles
+    const auto average_interval = callback.interval_sum / static_cast<double>(callback.count);
+
+    // Might be better to check each interval instead of the average
+    CHECK_LE(std::abs(average_interval - static_cast<double>(interval.count())), 1);
+  }
 }
 
 TEST_CASE("Callable destruction") {
