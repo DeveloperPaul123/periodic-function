@@ -53,8 +53,7 @@ TEST_CASE("Acceptable function timing") {
     func.start();
 
     const auto total_cycles = 25;
-    const auto wake_time
-        = std::chrono::high_resolution_clock::now() + (interval * total_cycles);
+    const auto wake_time = std::chrono::high_resolution_clock::now() + (interval * total_cycles);
     std::this_thread::sleep_until(wake_time);
 
     func.stop();
