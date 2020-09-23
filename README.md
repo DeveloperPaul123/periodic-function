@@ -16,11 +16,13 @@ Simple library to repeatedly call a member function, free function or lambda at 
 
 ## Features
 
-* Use various callback types:
+* Use a variety of callback types:
   * Class member functions via `std::bind`
   * Free functions
   * Lambdas
 * RAII cleanup, don't have to worry about explicitly calling `stop()`.
+* Reliable function timing (tested to be within ~1 millisecond)
+* Auto-recovery if callback takes longer than interval time.
 
 ## Usage
 
@@ -41,6 +43,13 @@ heartbeat.stop();
 ```
 
 ## Building
+
+`periodic-function` **requires** C++17 support and has been tested with:
+
+* Visual Studio 2019 (msvc)
+* Visual Studio 2019 (clang-cl)
+* Ubuntu 18/20.04 GCC 10
+* Ubuntu 18/20.04 Clang 10
 
 Use the following commands to build the project
 
