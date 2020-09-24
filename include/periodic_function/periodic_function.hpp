@@ -14,21 +14,59 @@ namespace dp {
 
     template <typename T> inline constexpr auto has_default_operator_v
         = has_default_operator<T>::value;
+
+    template <typename T> using is_suitable_callback
+        = std::enable_if_t<std::is_invocable_v<T> && details::has_default_operator_v<T>>;
   }  // namespace details
+
+  namespace policies {
+    /// @name Missed interval policies
+    /// @}
+    struct schedule_next_missed_interval_policy {
+      template <typename TimeType>
+      static constexpr TimeType schedule(TimeType callback_time, TimeType interval) {
+        if (callback_time >= interval) {
+          /**
+           * Handle case where callback execution took longer than an interval.
+           * We skip the current loop and fire on next iteration possible
+           * Use modulus here in case we missed multiple intervals.
+           **/
+          auto append_time = callback_time % interval;
+          if (append_time == TimeType{0}) {
+            return interval;
+          }
+          return append_time;
+        }
+        // take into account the callback duration for the next cycle
+        return interval - callback_time;
+      }
+    };
+
+    struct invoke_immediately_missed_interval_policy {
+      template <typename TimeType> static TimeType schedule(TimeType, TimeType interval) {
+        // immediate dispatch
+        return TimeType{0};
+      }
+    };
+    /// @}
+  }  // namespace policies
 
   /**
    * @brief Repeatedly calls a function at a given time interval.
    * @tparam Callback the callback time (std::function or a lambda)
    */
-  template <typename Callback, typename = std::enable_if_t<std::is_invocable<Callback>::value>,
-            typename = std::enable_if_t<dp::details::has_default_operator_v<Callback>>>
+  template <typename Callback = void (*)(),
+            typename MissedIntervalPolicy = policies::schedule_next_missed_interval_policy,
+            typename = details::is_suitable_callback<Callback>>
   class periodic_function final {
   public:
     using time_type = std::chrono::system_clock::duration;
 
     periodic_function(Callback &&callback, const time_type &interval) noexcept
         : interval_(interval), callback_(std::forward<Callback>(callback)) {}
-    periodic_function(periodic_function &other) = delete;
+    template <typename ReturnType>
+
+    periodic_function(const periodic_function &other) = delete;
     periodic_function(periodic_function &&other) noexcept
         : interval_(other.interval_), callback_(std::move(other.callback_)) {
       if (other.is_running()) {
@@ -90,6 +128,7 @@ namespace dp {
         const auto thread_start = std::chrono::high_resolution_clock::now();
         // pre-calculate time
         auto future_time = thread_start + interval_;
+
         while (true) {
           // sleep first
           {
@@ -107,37 +146,28 @@ namespace dp {
           } catch (...) {
           }
           const auto callback_end = std::chrono::high_resolution_clock::now();
-          const auto callback_duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+          const time_type callback_duration = std::chrono::duration_cast<std::chrono::milliseconds>(
               callback_end - callback_start);
-          if (callback_duration >= interval_) {
-            /**
-             * Handle case where callback execution took longer than an interval.
-             * We skip the current loop and fire on next iteration possible
-             * Use modulus here in case we missed multiple intervals.
-             **/
-            auto append_time = callback_duration % interval_;
-            if (append_time == time_type{0}) {
-              future_time += interval_;
-            } else {
-              future_time += append_time;
-            }
-          } else {
-            // take into account the callback duration for the next cycle
-            future_time += interval_ - callback_duration;
-          }
+          const time_type append_time
+              = MissedIntervalPolicy::schedule(callback_duration, interval_);
+          future_time += append_time;
         }
       });
     }
 
-    /// @brief Private members
-    /// @{
     using mutex_type = std::mutex;
-    mutex_type stop_cv_mutex_;
+    mutex_type stop_cv_mutex_{};
     std::thread runner_{};
     std::atomic_bool stop_ = false;
-    std::condition_variable stop_condition_;
+    std::condition_variable stop_condition_{};
     time_type interval_{100};
     Callback callback_;
-    /// @}
   };
+
+  /// @name CTAD guides
+  /// @{
+  template <typename ReturnType> periodic_function(ReturnType (*)())
+      -> periodic_function<ReturnType (*)()>;
+  /// @}
+
 }  // namespace dp

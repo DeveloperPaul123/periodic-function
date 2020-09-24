@@ -149,6 +149,50 @@ TEST_CASE("Callback takes as long or longer than interval") {
   }
 }
 
+TEST_CASE("Immediately invoke on callback interval miss") {
+  using time_type = std::chrono::milliseconds;
+  constexpr static auto interval_count = 3U;
+  // note that in the last case the interval time = the callback execution time
+  std::array<time_type, interval_count> intervals
+      = {time_type{300U}, time_type{500U}, time_type{300U}};
+  std::array<time_type, interval_count> callback_intervals{time_type{500U}, time_type{700U},
+                                                           time_type{700U}};
+
+  for (auto i = 0; i < interval_count; ++i) {
+    const auto interval = intervals[i];
+    const auto callback_duration = callback_intervals[i];
+
+    callback_counter counter;
+
+    using callback_type = std::function<void()>;
+    using missed_interval_policy = dp::policies::invoke_immediately_missed_interval_policy;
+    using per_func = dp::periodic_function<callback_type, missed_interval_policy>;
+    per_func func(
+        [&]() -> void {
+          counter.on_timeout();
+          std::this_thread::sleep_for(callback_duration);
+        },
+        interval);
+
+    func.start();
+    const auto call_count = 10;
+    const auto total_time = call_count * interval;
+    const auto wake_time = std::chrono::high_resolution_clock::now() + (call_count * interval);
+
+    // sleep until the "wake time"
+    std::this_thread::sleep_until(wake_time);
+    func.stop();
+
+    // remove the first interval, since the first wait will work correctly,
+    // after that point, the interval of the callback is dictated by the wait time of the callback
+    // itself. We add 1 because the first wait loop will work normally
+    const auto expected_count
+        = static_cast<unsigned>(std::floor((total_time - interval) / callback_duration)) + 1;
+
+    CHECK_EQ(expected_count, counter.count);
+  }
+}
+
 TEST_CASE("Suppress exceptions in callback") {
   const auto interval = std::chrono::milliseconds{300};
 
