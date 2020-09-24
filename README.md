@@ -42,6 +42,20 @@ heartbeat.start();
 heartbeat.stop();
 ```
 
+## Customization Points
+
+### Handling Callbacks that Exceed the Timer Interval
+
+How callbacks that exceed the interval are handled is passed on a template argument policy class. The current policies available are:
+
+#### `schedule_next_missed_interval_policy` (**default**)
+
+This will schedule the callback to be called again on the next interval timeout (the interval that was missed is skipped). This is good to use if the callback is not expected to exceed the interval time.
+
+#### `invoke_immediately_missed_interval_policy`
+
+This will schedule the callback to be called immediately and then control will be given back to the timer which will operate at the regular interval.
+
 ## Building
 
 `periodic-function` **requires** C++17 support and has been tested with:
@@ -79,4 +93,4 @@ The project is licensed under the MIT license. See [LICENSE](LICENSE) for more d
 
 ### WIP Items
 
-Performance on MacOS is currently not up to my standards. This is actively being investigated.
+:construction: MacOS support is still a WIP. :construction:
