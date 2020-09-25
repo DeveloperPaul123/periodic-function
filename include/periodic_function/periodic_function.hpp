@@ -78,11 +78,13 @@ namespace dp {
 
     periodic_function &operator=(const periodic_function &other) = delete;
     periodic_function &operator=(periodic_function &&other) noexcept {
-      interval_ = other.interval_;
-      callback_ = std::move(other.callback_);
-      if (other.is_running()) {
-        other.stop();
-        start();
+      if (this != &other) {
+        interval_ = other.interval_;
+        callback_ = std::move(other.callback_);
+        if (other.is_running()) {
+          other.stop();
+          start();
+        }
       }
       return *this;
     }
