@@ -6,8 +6,8 @@
 #include <cmath>
 #include <functional>
 #include <iostream>
-#include <vector>
 #include <periodic_function/periodic_function.hpp>
+#include <vector>
 
 struct callback_counter {
   std::atomic<int> count{0};
