@@ -43,7 +43,7 @@ namespace dp {
     };
 
     struct invoke_immediately_missed_interval_policy {
-      template <typename TimeType> static TimeType schedule(TimeType, TimeType interval) {
+      template <typename TimeType> static TimeType schedule(TimeType, TimeType) {
         // immediate dispatch
         return TimeType{0};
       }

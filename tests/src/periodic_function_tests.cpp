@@ -158,7 +158,7 @@ TEST_CASE("Immediately invoke on callback interval miss") {
   std::array<time_type, interval_count> callback_intervals{time_type{500U}, time_type{700U},
                                                            time_type{700U}};
 
-  for (auto i = 0; i < interval_count; ++i) {
+  for (auto i = 0U; i < interval_count; ++i) {
     const auto interval = intervals[i];
     const auto callback_duration = callback_intervals[i];
 
