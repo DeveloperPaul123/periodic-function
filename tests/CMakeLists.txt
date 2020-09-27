@@ -13,7 +13,6 @@ CPMAddPackage(
   VERSION 1.1
 )
 
-
 CPMAddPackage(
   NAME doctest
   GITHUB_REPOSITORY onqtam/doctest
@@ -33,7 +32,7 @@ set(testing_sources
 add_executable(${PROJECT_NAME} ${testing_sources})
 target_link_libraries(${PROJECT_NAME} doctest periodic-function project-warnings)
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND WARNINGS_AS_ERRORS)
   set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 COMPILE_FLAGS "-Wall -pedantic -Wextra -Werror")
 else()
   set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
