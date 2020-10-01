@@ -55,7 +55,7 @@ namespace dp {
    * @brief Repeatedly calls a function at a given time interval.
    * @tparam Callback the callback time (std::function or a lambda)
    */
-  template <typename Callback = void (*)(),
+  template <typename Callback,
             typename MissedIntervalPolicy = policies::schedule_next_missed_interval_policy,
             typename = details::is_suitable_callback<Callback>>
   class periodic_function final {
