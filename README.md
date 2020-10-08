@@ -16,11 +16,13 @@ Simple library to repeatedly call a member function, free function or lambda at 
 
 ## Features
 
-* Use various callback types:
+* Use a variety of callback types:
   * Class member functions via `std::bind`
   * Free functions
   * Lambdas
 * RAII cleanup, don't have to worry about explicitly calling `stop()`.
+* Reliable function timing (tested to be within ~1 millisecond)
+* Auto-recovery if callback takes longer than interval time.
 
 ## Usage
 
@@ -40,7 +42,28 @@ heartbeat.start();
 heartbeat.stop();
 ```
 
+## Customization Points
+
+### Handling Callbacks that Exceed the Timer Interval
+
+How callbacks that exceed the interval are handled is passed on a template argument policy class. The current policies available are:
+
+#### `schedule_next_missed_interval_policy` (**default**)
+
+This will schedule the callback to be called again on the next interval timeout (the interval that was missed is skipped). This is good to use if the callback is not expected to exceed the interval time.
+
+#### `invoke_immediately_missed_interval_policy`
+
+This will schedule the callback to be called immediately and then control will be given back to the timer which will operate at the regular interval.
+
 ## Building
+
+`periodic-function` **requires** C++17 support and has been tested with:
+
+* Visual Studio 2019 (msvc)
+* Visual Studio 2019 (clang-cl)
+* Ubuntu 18/20.04 GCC 10
+* Ubuntu 18/20.04 Clang 10
 
 Use the following commands to build the project
 
@@ -70,4 +93,4 @@ The project is licensed under the MIT license. See [LICENSE](LICENSE) for more d
 
 ### WIP Items
 
-Performance on MacOS is currently not up to my standards. This is actively being investigated.
+:construction: MacOS support is still a WIP. :construction:
