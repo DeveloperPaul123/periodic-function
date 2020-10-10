@@ -60,7 +60,8 @@ namespace dp {
             typename = details::is_suitable_callback<Callback>>
   class periodic_function final {
   public:
-    using time_type = std::chrono::steady_clock::duration;
+    using clock_type = std::chrono::steady_clock;
+    using time_type = clock_type::duration;
 
     periodic_function(Callback &&callback, const time_type &interval) noexcept
         : interval_(interval), callback_(std::forward<Callback>(callback)) {}
@@ -127,7 +128,7 @@ namespace dp {
     void start_internal() {
       if (is_running()) stop();
       runner_ = std::thread([this]() {
-        const auto thread_start = std::chrono::steady_clock::now();
+        const auto thread_start = clock_type::now();
         // pre-calculate time
         auto future_time = thread_start + interval_;
 
@@ -141,13 +142,13 @@ namespace dp {
           }
 
           // execute the callback and measure execution time
-          const auto callback_start = std::chrono::steady_clock::now();
+          const auto callback_start = clock_type::now();
           // suppress exceptions
           try {
             callback_();
           } catch (...) {
           }
-          const auto callback_end = std::chrono::steady_clock::now();
+          const auto callback_end = clock_type::now();
           const time_type callback_duration = std::chrono::duration_cast<std::chrono::milliseconds>(
               callback_end - callback_start);
           const time_type append_time
