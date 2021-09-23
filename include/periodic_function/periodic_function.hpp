@@ -53,7 +53,7 @@ namespace dp {
 
   /**
    * @brief Repeatedly calls a function at a given time interval.
-   * @tparam Callback the callback time (std::function or a lambda)
+   * @tparam Callback the callback that will be called (std::function or a lambda)
    */
   template <typename Callback,
             typename MissedIntervalPolicy = policies::schedule_next_missed_interval_policy,
@@ -103,7 +103,7 @@ namespace dp {
      */
     void stop() {
       {
-        std::unique_lock<mutex_type> lock(stop_cv_mutex_);
+        std::lock_guard lock(stop_cv_mutex_);
         stop_ = true;
       }
       stop_condition_.notify_one();
@@ -113,7 +113,7 @@ namespace dp {
       }
       {
         // reset stop condition
-        std::unique_lock<mutex_type> lock(stop_cv_mutex_);
+        std::lock_guard lock(stop_cv_mutex_);
         stop_ = false;
       }
     }
@@ -135,10 +135,9 @@ namespace dp {
         while (true) {
           // sleep first
           {
-            std::unique_lock<mutex_type> lock(stop_cv_mutex_);
-            stop_condition_.wait_until(lock, future_time, [&]() -> bool { return stop_; });
-            // check for stoppage here while in the scope of the lock
-            if (stop_) break;
+            std::unique_lock lock(stop_cv_mutex_);
+            if (stop_condition_.wait_until(lock, future_time, [&]() -> bool { return stop_; }))
+              break;
           }
 
           // execute the callback and measure execution time
