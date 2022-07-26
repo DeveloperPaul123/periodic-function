@@ -3,7 +3,7 @@ periodic-function
 </h1>
 
 [![say thanks](https://img.shields.io/badge/Say%20Thanks-👍-1EAEDB.svg)](https://github.com/DeveloperPaul123/periodic-function/stargazers)
-[![Discord](https://img.shields.io/discord/652515194572111872)](https://img.shields.io/discord/652515194572111872)
+[![Discord](https://img.shields.io/discord/652515194572111872)](https://discord.gg/CX2ybByRnt)
 
 [![Actions Status](https://github.com/DeveloperPaul123/periodic-function/workflows/MacOS/badge.svg)](https://github.com/DeveloperPaul123/periodic-function/actions)
 [![Actions Status](https://github.com/DeveloperPaul123/periodic-function/workflows/Windows/badge.svg)](https://github.com/DeveloperPaul123/periodic-function/actions)
